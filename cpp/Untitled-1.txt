@@ -1,0 +1,45 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int Solve(int x, int y, int s1, int s2, int t){
+    if(s1 > s2) return INT_MAX;
+    if(s1 == s2) return t;
+    return min(Solve(x, y, s1+x, s2, t+1), Solve(x, y, s1+y, s2, t+1));
+}
+
+bool solve(int x, int y, int &temp, string str){
+    int res = 0;
+    for(int i = 0; i < str.size()-1; i++){
+        if(str[i] < str[i+1]){
+            int t = Solve(x, y, str[i]-'0', str[i+1]-'0', t);
+            if(t != INT_MAX) res += t;
+            else return false;
+        }
+        else if(str[i] > str[i+1]){
+            int t = Solve(x, y, str[i]-'0', (str[i+1]-'0')*10, t);
+            if(t != INT_MAX) res += t;
+            else return false;
+        }
+        else{
+            int t = Solve(x, y, str[i]-'0', str[i+1]-'0', t);
+            if(t == INT_MAX) t = Solve(x, y, str[i]-'0', (str[i+1]-'0')*10, t);
+            if(t != INT_MAX) res += t;
+            else return false;
+        }
+    }
+    temp = res;
+    return true;
+}
+
+int main(){
+    string str;
+    cin >> str;
+    vector<vector<int>> res(10, vector<int>(10, -1));
+    for(int i = 0; i < 10; i++){
+        for(int j = i+1; j < 10; j++){
+            int temp = -1;
+            if(solve(i, j, temp, str)) res[i][j] = temp;
+            // else res[i][j] = -1;
+        }
+    }
+}
